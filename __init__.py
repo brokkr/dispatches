@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+# Copyright 2014 Timothée Ravier 
+# https://tim.siosm.fr/blog/2014/02/24/journald-log-scanner-python / CC-BY-SA 4.0
+# Contributions Copyright 2015 Mads Michelsen 
+# https://github.com/brokkr/pernittengryn / GPLv3
+# License compatibility: http://creativecommons.org/compatiblelicenses
+
 from systemd import journal
 from datetime import datetime,timedelta
 import re
