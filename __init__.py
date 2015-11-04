@@ -14,16 +14,27 @@ class Log():
         yesterday = datetime.now() - timedelta(days=3, minutes=10)
         j.seek_realtime(yesterday)
 
+        self.service_name = service_name
         self.info = []
 
         # Filter and store output
         for entry in j:
             try:
                 if entry['_SYSTEMD_UNIT'] == service_name:
-                    service_msg = (service_name, entry['__REALTIME_TIMESTAMP'], entry['MESSAGE'])
+                    humantime =  entry['__REALTIME_TIMESTAMP'].strftime("%Y-%m-%d %H:%M:%S")
+                    service_tpl = (service_name, humantime, entry['MESSAGE'])
+                    service_msg = ' | '.join(service_tpl)
                     self.info.append(service_msg)
             except KeyError:
                 pass
 
-
+    def mail(self):
+        # Send the content in a mail to root
+        mail = MIMEText('\n'.join(self.info))
+        mail['Subject'] = '[THEMINT] Logs from ' + self.service_name
+        mail['From'] = 'root@localhost'
+        mail['To'] = 'root@localhost'
+        server = smtplib.SMTP('localhost')
+        server.send_message(mail)
+        server.quit()
 
