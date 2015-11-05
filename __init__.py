@@ -34,11 +34,14 @@ class Log():
 
 class Slog():
     def __init__(self, service, subset):
-        # Filter and store output
+        self.service_name = service['name']
         self.errors = [ (x['__REALTIME_TIMESTAMP'], x['PRIORITY'], x['MESSAGE']) 
             for x in subset if x['PRIORITY'] < 4 ]
-        self.searches = [ (x['__REALTIME_TIMESTAMP'], x['PRIORITY'], x['MESSAGE']) 
-            for x in subset if service['search'] in x['MESSAGE'] ]
+        try:
+            self.searches = [ (x['__REALTIME_TIMESTAMP'], x['PRIORITY'], 
+            x['MESSAGE']) for x in subset if service['search'] in x['MESSAGE'] ]
+        except KeyError:
+            self.searches = None
         #humantime =  entry['__REALTIME_TIMESTAMP'].strftime("%Y-%m-%d %H:%M:%S")
         #service_tpl = (service_name, humantime, entry['MESSAGE'])
         #service_msg = ' | '.join(service_tpl)
