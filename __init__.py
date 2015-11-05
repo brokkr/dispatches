@@ -28,22 +28,21 @@ class Log():
 
         for service in services:
             subset = [ x for x in self.raw if x['_SYSTEMD_UNIT'] == service['name'] ]
-            print(subset)
-            #slog = Slog(service, subset)
-            #self.filtered.append(slog)
+            #print(subset)
+            slog = Slog(service, subset)
+            self.filtered.append(slog)
 
 class Slog():
-    def __init__(self, service):
+    def __init__(self, service, subset):
         # Filter and store output
-        for entry in j:
-            try:
-                if entry['_SYSTEMD_UNIT'] == service_name:
-                    humantime =  entry['__REALTIME_TIMESTAMP'].strftime("%Y-%m-%d %H:%M:%S")
-                    service_tpl = (service_name, humantime, entry['MESSAGE'])
-                    service_msg = ' | '.join(service_tpl)
-                    self.info.append(service_msg)
-            except KeyError:
-                pass
+        self.errors = [ (x['__REALTIME_TIMESTAMP'], x['PRIORITY'], x['MESSAGE']) 
+            for x in subset if x['PRIORITY'] < 4 ]
+        self.searches = [ (x['__REALTIME_TIMESTAMP'], x['PRIORITY'], x['MESSAGE']) 
+            for x in subset if service['search'] in x['MESSAGE'] ]
+        #humantime =  entry['__REALTIME_TIMESTAMP'].strftime("%Y-%m-%d %H:%M:%S")
+        #service_tpl = (service_name, humantime, entry['MESSAGE'])
+        #service_msg = ' | '.join(service_tpl)
+        #self.info.append(service_msg)
 
     def mail(self):
         # Send the content in a mail to root
