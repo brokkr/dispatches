@@ -1,8 +1,8 @@
 #! /usr/bin/python3
 
-import pernittengryn
+import dispatches
 
-weblog =  pernittengryn.Log( [ {'name': 'postfix', 'search': 'relay'}, 
+weblog =  dispatches.Log( [ {'name': 'postfix', 'search': 'relay'}, 
     {'name': 'dovecot', 'search': 'lmtp'}, {'name': 'nginx'} ] )
 weblog.mail()
 

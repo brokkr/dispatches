@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# dispatches - a Python module for filtering the systemd journal
 # Copyright 2014 Timothée Ravier 
 # https://tim.siosm.fr/blog/2014/02/24/journald-log-scanner-python / CC-BY-SA 4.0
 # Contributions Copyright 2015 Mads Michelsen 
