@@ -1,5 +1,5 @@
-# pernittengryn
-Figuring out how to filter systemd journal entries
+# dispatches
+Filtering and emailing the systemd journal using Python  
 
 Reworked from journald-filter.py 
 Copyright 2014 Timothée Ravier
