@@ -35,13 +35,13 @@ class Log():
 class Slog():
     def __init__(self, service, subset):
         self.service_name = service['name']
-        self.errors = [ (x['__REALTIME_TIMESTAMP'], x['PRIORITY'], x['MESSAGE']) 
+        errors = [ (x['__REALTIME_TIMESTAMP'], x['PRIORITY'], x['MESSAGE']) 
             for x in subset if x['PRIORITY'] < 4 ]
         try:
-            self.searches = [ (x['__REALTIME_TIMESTAMP'], x['PRIORITY'], 
-            x['MESSAGE']) for x in subset if service['search'] in x['MESSAGE'] ]
+            searches = [ (x['__REALTIME_TIMESTAMP'], x['PRIORITY'], x['MESSAGE']) 
+            for x in subset if service['search'] in x['MESSAGE'] ]
         except KeyError:
-            self.searches = None
+            searches = []
         #humantime =  entry['__REALTIME_TIMESTAMP'].strftime("%Y-%m-%d %H:%M:%S")
         #service_tpl = (service_name, humantime, entry['MESSAGE'])
         #service_msg = ' | '.join(service_tpl)
