@@ -14,15 +14,26 @@ from email.mime.text import MIMEText
 
 # Open the journal for reading, set log level and go back one day and 10 minutes
 class Log():
-    def __init__(self, service_name):
+    def __init__(self, services):
         j = journal.Reader()
         j.log_level(journal.LOG_INFO)
-        yesterday = datetime.now() - timedelta(days=3, minutes=10)
-        j.seek_realtime(yesterday)
+        timeago = datetime.now() - timedelta(days=3, minutes=10)
+        j.seek_realtime(timeago)
+        
+        self.filtered = []
+        self.raw = []
+        for entry in j:
+            entry['_SYSTEMD_UNIT'] = entry.get('_SYSTEMD_UNIT', None)
+            self.raw.append(entry)
 
-        self.service_name = service_name
-        self.info = []
+        for service in services:
+            subset = [ x for x in self.raw if x['_SYSTEMD_UNIT'] == service['name'] ]
+            print(subset)
+            #slog = Slog(service, subset)
+            #self.filtered.append(slog)
 
+class Slog():
+    def __init__(self, service):
         # Filter and store output
         for entry in j:
             try:
