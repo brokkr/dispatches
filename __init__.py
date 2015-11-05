@@ -11,14 +11,16 @@ from datetime import datetime,timedelta
 import re
 import smtplib
 from email.mime.text import MIMEText
+import socket
 
 # Open the journal for reading, set log level and go back one day and 10 minutes
 class Log():
     def __init__(self, services):
         j = journal.Reader()
         j.log_level(journal.LOG_INFO)
-        timeago = datetime.now() - timedelta(days=3, minutes=10)
-        j.seek_realtime(timeago)
+        self.now = datetime.now()
+        self.timeago = self.now - timedelta(days=1, minutes=10)
+        j.seek_realtime(self.timeago)
         
         self.msgstring = ''
         self.filtered = []
@@ -37,8 +39,10 @@ class Log():
 
     def mail(self):
         # Send the content in a mail to root
+        hostname = socket.gethostname()
         mail = MIMEText(self.msgstring)
-        mail['Subject'] = '[THEMINT] Logs'
+        mail['Subject'] = '[ ' + hostname + ' ] Logs for ' + \
+            htime(self.now, tod=False)
         mail['From'] = 'root@localhost'
         mail['To'] = 'root@localhost'
         server = smtplib.SMTP('localhost')
@@ -48,10 +52,10 @@ class Log():
 class Slog():
     def __init__(self, service, subset):
         self.service_name = service['name']
-        errors = [ ( self.htime(x['__REALTIME_TIMESTAMP']), str(x['PRIORITY']), 
+        errors = [ ( htime(x['__REALTIME_TIMESTAMP']), str(x['PRIORITY']), 
             x['MESSAGE'] ) for x in subset if x['PRIORITY'] < 4 ]
         try:
-            searches = [ ( self.htime(x['__REALTIME_TIMESTAMP']), str(x['PRIORITY']), 
+            searches = [ ( htime(x['__REALTIME_TIMESTAMP']), str(x['PRIORITY']), 
                 x['MESSAGE']) for x in subset if service['search'] in x['MESSAGE'] ]
         except KeyError:
             searches = []
@@ -60,8 +64,12 @@ class Slog():
         errorstr = '    Errors\n' + '\n        '.join(self.errormsgs)
         searchstr = '    Searches\n        ' + '\n        '.join(self.searchmsgs)
         self.msgstring = ' '.join(self.service_name).upper() + '\n' + \
-           errorstr + '\n' + searchstr + '\n' 
+           errorstr + '\n' + searchstr + '\n\n\n' 
 
-    def htime(self, timestamp):
+def htime(timestamp, tod=True):
+    if tod:
         return timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        return timestamp.strftime("%A %d %B %Y")
+        
 
